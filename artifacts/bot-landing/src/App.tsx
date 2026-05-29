@@ -4,13 +4,37 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
+import DashboardLogin from "@/pages/dashboard-login";
+import DashboardServers from "@/pages/dashboard-servers";
+import DashboardServer from "@/pages/dashboard-server";
+import DashboardGuard from "@/pages/dashboard-guard";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/dashboard/login" component={DashboardLogin} />
+      <Route path="/dashboard">
+        <DashboardGuard>
+          <DashboardServers />
+        </DashboardGuard>
+      </Route>
+      <Route path="/dashboard/server/:guildId">
+        {(params) => (
+          <DashboardGuard>
+            <DashboardServer />
+          </DashboardGuard>
+        )}
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );

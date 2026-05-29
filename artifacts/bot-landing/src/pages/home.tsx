@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { 
@@ -27,9 +27,9 @@ import {
 
 const INVITE_LINK = "https://discord.com/oauth2/authorize?client_id=1509885542966366319&permissions=1099511893078&scope=bot";
 
-const fadeInUp = {
+const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
 };
 
 const staggerContainer = {
@@ -58,12 +58,19 @@ export default function Home() {
             <a href="#commands" className="hover:text-foreground transition-colors">Commands</a>
             <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
           </div>
-          <a href={INVITE_LINK} target="_blank" rel="noreferrer">
-            <Button size="sm" className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20">
-              <SiDiscord className="w-4 h-4" />
-              <span className="hidden sm:inline">Add to Server</span>
-            </Button>
-          </a>
+          <div className="flex items-center gap-2">
+            <Link href="/dashboard">
+              <Button size="sm" variant="outline" className="gap-2 border-white/15 hover:bg-white/5 hidden sm:flex">
+                Dashboard
+              </Button>
+            </Link>
+            <a href={INVITE_LINK} target="_blank" rel="noreferrer">
+              <Button size="sm" className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20">
+                <SiDiscord className="w-4 h-4" />
+                <span className="hidden sm:inline">Add to Server</span>
+              </Button>
+            </a>
+          </div>
         </div>
       </nav>
 

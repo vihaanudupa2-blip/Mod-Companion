@@ -10,13 +10,16 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Discord OAuth2 authentication
+  - name: dashboard
+    description: Bot dashboard configuration
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +27,201 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current authenticated user
+      responses:
+        "200":
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /dashboard/guilds:
+    get:
+      operationId: getDashboardGuilds
+      tags: [dashboard]
+      summary: Get guilds the user admins where bot is present
+      responses:
+        "200":
+          description: List of manageable guilds
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DashboardGuild"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /dashboard/guilds/{guildId}/settings:
+    get:
+      operationId: getGuildSettings
+      tags: [dashboard]
+      summary: Get settings for a guild
+      parameters:
+        - name: guildId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Guild settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuildSettings"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateGuildSettings
+      tags: [dashboard]
+      summary: Update settings for a guild
+      parameters:
+        - name: guildId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GuildSettingsUpdate"
+      responses:
+        "200":
+          description: Updated guild settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuildSettings"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /dashboard/guilds/{guildId}/banned-words:
+    post:
+      operationId: addBannedWord
+      tags: [dashboard]
+      summary: Add a banned word to a guild
+      parameters:
+        - name: guildId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BannedWordInput"
+      responses:
+        "200":
+          description: Updated banned words list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BannedWordsList"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /dashboard/guilds/{guildId}/banned-words/{word}:
+    delete:
+      operationId: removeBannedWord
+      tags: [dashboard]
+      summary: Remove a banned word from a guild
+      parameters:
+        - name: guildId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: word
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Updated banned words list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BannedWordsList"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /dashboard/guilds/{guildId}/reaction-roles:
+    get:
+      operationId: getReactionRoles
+      tags: [dashboard]
+      summary: Get reaction roles for a guild
+      parameters:
+        - name: guildId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of reaction roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReactionRole"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +232,139 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        discriminator:
+          type: string
+        avatar:
+          type: ["string", "null"]
+        avatarUrl:
+          type: string
+      required:
+        - id
+        - username
+        - discriminator
+        - avatarUrl
+
+    DashboardGuild:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        icon:
+          type: ["string", "null"]
+        iconUrl:
+          type: ["string", "null"]
+        botPresent:
+          type: boolean
+      required:
+        - id
+        - name
+        - botPresent
+
+    GuildSettings:
+      type: object
+      properties:
+        guildId:
+          type: string
+        welcomeEnabled:
+          type: boolean
+        welcomeChannelId:
+          type: ["string", "null"]
+        goodbyeEnabled:
+          type: boolean
+        autoModEnabled:
+          type: boolean
+        bannedWords:
+          type: array
+          items:
+            type: string
+        maxMentions:
+          type: integer
+        maxEmojis:
+          type: integer
+        maxCapsRatio:
+          type: integer
+      required:
+        - guildId
+        - welcomeEnabled
+        - goodbyeEnabled
+        - autoModEnabled
+        - bannedWords
+        - maxMentions
+        - maxEmojis
+        - maxCapsRatio
+
+    GuildSettingsUpdate:
+      type: object
+      properties:
+        welcomeEnabled:
+          type: boolean
+        welcomeChannelId:
+          type: ["string", "null"]
+        goodbyeEnabled:
+          type: boolean
+        autoModEnabled:
+          type: boolean
+        maxMentions:
+          type: integer
+        maxEmojis:
+          type: integer
+        maxCapsRatio:
+          type: integer
+
+    BannedWordInput:
+      type: object
+      properties:
+        word:
+          type: string
+      required:
+        - word
+
+    BannedWordsList:
+      type: object
+      properties:
+        bannedWords:
+          type: array
+          items:
+            type: string
+      required:
+        - bannedWords
+
+    ReactionRole:
+      type: object
+      properties:
+        id:
+          type: integer
+        messageId:
+          type: string
+        channelId:
+          type: string
+        guildId:
+          type: string
+        emoji:
+          type: string
+        roleId:
+          type: string
+      required:
+        - id
+        - messageId
+        - channelId
+        - guildId
+        - emoji
+        - roleId
