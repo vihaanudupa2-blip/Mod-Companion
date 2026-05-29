@@ -14,9 +14,18 @@ export interface DuplicateTracker {
   lastSeen: number;
 }
 
+export interface ReactionRoleEntry {
+  messageId: string;
+  channelId: string;
+  guildId: string;
+  emoji: string;
+  roleId: string;
+}
+
 export interface BotState {
   warnings: Map<string, WarnEntry[]>;
   duplicateMessages: Map<string, DuplicateTracker>;
+  reactionRoles: ReactionRoleEntry[];
 }
 
 declare module "discord.js" {

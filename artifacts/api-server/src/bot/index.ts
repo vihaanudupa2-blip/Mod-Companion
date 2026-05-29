@@ -6,6 +6,7 @@ import type { Command } from "./types.js";
 import { onMessageCreate } from "./events/messageCreate.js";
 import { onGuildMemberAdd } from "./events/guildMemberAdd.js";
 import { onGuildMemberRemove } from "./events/guildMemberRemove.js";
+import { onReactionAdd, onReactionRemove } from "./events/reactionRoles.js";
 
 import ban from "./commands/ban.js";
 import kick from "./commands/kick.js";
@@ -13,9 +14,10 @@ import warn from "./commands/warn.js";
 import warnings from "./commands/warnings.js";
 import clearwarnings from "./commands/clearwarnings.js";
 import purge from "./commands/purge.js";
+import reactionrole from "./commands/reactionrole.js";
 import help from "./commands/help.js";
 
-const COMMANDS: Command[] = [ban, kick, warn, warnings, clearwarnings, purge, help];
+const COMMANDS: Command[] = [ban, kick, warn, warnings, clearwarnings, purge, reactionrole, help];
 
 export function startBot(): void {
   if (!config.token) {
@@ -27,17 +29,19 @@ export function startBot(): void {
     intents: [
       GatewayIntentBits.Guilds,
       GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.GuildMembers,   // Privileged — must be enabled in Dev Portal
-      GatewayIntentBits.MessageContent, // Privileged — must be enabled in Dev Portal
+      GatewayIntentBits.GuildMembers,        // Privileged — must be enabled in Dev Portal
+      GatewayIntentBits.MessageContent,      // Privileged — must be enabled in Dev Portal
+      GatewayIntentBits.GuildMessageReactions,
       GatewayIntentBits.DirectMessages,
     ],
-    partials: [Partials.GuildMember, Partials.User, Partials.Message, Partials.Channel],
+    partials: [Partials.GuildMember, Partials.User, Partials.Message, Partials.Channel, Partials.Reaction],
   });
 
   // Attach state and commands to client
   client.botState = {
     warnings: new Map(),
     duplicateMessages: new Map(),
+    reactionRoles: [],
   };
   client.commands = new Collection<string, Command>();
 
@@ -60,6 +64,14 @@ export function startBot(): void {
 
   client.on("guildMemberRemove", (member) => {
     onGuildMemberRemove(member).catch((err) => logger.error({ err }, "guildMemberRemove error"));
+  });
+
+  client.on("messageReactionAdd", (reaction, user) => {
+    onReactionAdd(reaction, user).catch((err) => logger.error({ err }, "messageReactionAdd error"));
+  });
+
+  client.on("messageReactionRemove", (reaction, user) => {
+    onReactionRemove(reaction, user).catch((err) => logger.error({ err }, "messageReactionRemove error"));
   });
 
   client.login(config.token).catch((err) => {

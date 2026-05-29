@@ -26,6 +26,15 @@ const help: Command = {
           ].join("\n"),
         },
         {
+          name: "🎭 Reaction Roles",
+          value: [
+            `\`!reactionrole create\` — Post a reaction role panel`,
+            `\`!reactionrole add <emoji> @role <msgId>\` — Link emoji to role`,
+            `\`!reactionrole list\` — Show all reaction roles`,
+            `\`!reactionrole remove <msgId> <emoji>\` — Remove a mapping`,
+          ].join("\n"),
+        },
+        {
           name: "🛡️ Auto-Moderation",
           value: [
             "Auto-mod is always active and handles:",
@@ -36,6 +45,10 @@ const help: Command = {
             "• Discord invite links",
             "• Duplicate/spam messages",
           ].join("\n"),
+        },
+        {
+          name: "😄 Auto-Reactions",
+          value: "Bot automatically reacts with emojis to messages containing keywords like `gm`, `gg`, `hype`, `lol`, `birthday`, and more!",
         },
         {
           name: "👋 Welcome / Goodbye",

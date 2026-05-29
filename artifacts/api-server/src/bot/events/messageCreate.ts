@@ -1,12 +1,18 @@
 import type { Message } from "discord.js";
 import { config } from "../config.js";
 import { handleAutoMod } from "./automod.js";
+import { handleAutoReact } from "./autoreact.js";
 
 export async function onMessageCreate(message: Message): Promise<void> {
   if (message.author.bot || !message.guild) return;
 
   // Run auto-mod first
   await handleAutoMod(message);
+
+  // Auto-react to keywords (only for non-command messages)
+  if (!message.content.startsWith(config.prefix)) {
+    await handleAutoReact(message);
+  }
 
   // Check if message is a command
   if (!message.content.startsWith(config.prefix)) return;
