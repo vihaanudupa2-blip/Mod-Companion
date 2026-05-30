@@ -11,7 +11,11 @@ export interface GuildSettings {
   welcomeEnabled: boolean;
   /** @nullable */
   welcomeChannelId?: string | null;
+  /** @nullable */
+  welcomeMessage?: string | null;
   goodbyeEnabled: boolean;
+  /** @nullable */
+  goodbyeMessage?: string | null;
   autoModEnabled: boolean;
   bannedWords: string[];
   maxMentions: number;

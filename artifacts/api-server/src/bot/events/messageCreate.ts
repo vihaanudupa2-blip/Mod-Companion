@@ -7,9 +7,13 @@ const COMMAND_EMOJIS: Record<string, string> = {
   warn:          "⚠️",
   ban:           "🔨",
   kick:          "👢",
+  mute:          "🔇",
+  unmute:        "🔊",
   purge:         "🗑️",
   warnings:      "📋",
   clearwarnings: "🧹",
+  userinfo:      "👤",
+  slowmode:      "🐢",
   help:          "🤖",
   reactionrole:  "🎭",
 };

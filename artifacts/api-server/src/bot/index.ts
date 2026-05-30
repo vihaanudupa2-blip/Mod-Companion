@@ -14,10 +14,18 @@ import warn from "./commands/warn.js";
 import warnings from "./commands/warnings.js";
 import clearwarnings from "./commands/clearwarnings.js";
 import purge from "./commands/purge.js";
+import mute from "./commands/mute.js";
+import unmute from "./commands/unmute.js";
+import userinfo from "./commands/userinfo.js";
+import slowmode from "./commands/slowmode.js";
 import reactionrole from "./commands/reactionrole.js";
 import help from "./commands/help.js";
 
-const COMMANDS: Command[] = [ban, kick, warn, warnings, clearwarnings, purge, reactionrole, help];
+const COMMANDS: Command[] = [
+  ban, kick, warn, warnings, clearwarnings, purge,
+  mute, unmute, userinfo, slowmode,
+  reactionrole, help,
+];
 
 export function startBot(): void {
   if (!config.token) {
@@ -37,7 +45,6 @@ export function startBot(): void {
     partials: [Partials.GuildMember, Partials.User, Partials.Message, Partials.Channel, Partials.Reaction],
   });
 
-  // Attach state and commands to client
   client.botState = {
     warnings: new Map(),
     duplicateMessages: new Map(),
@@ -51,7 +58,7 @@ export function startBot(): void {
 
   client.once("ready", () => {
     logger.info({ tag: client.user?.tag }, "Discord bot is online");
-    client.user?.setActivity("your server 👀", { type: 3 }); // WATCHING
+    client.user?.setActivity("your server 👀", { type: 3 });
   });
 
   client.on("messageCreate", (msg) => {

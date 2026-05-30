@@ -286,8 +286,12 @@ components:
           type: boolean
         welcomeChannelId:
           type: ["string", "null"]
+        welcomeMessage:
+          type: ["string", "null"]
         goodbyeEnabled:
           type: boolean
+        goodbyeMessage:
+          type: ["string", "null"]
         autoModEnabled:
           type: boolean
         bannedWords:
@@ -317,8 +321,12 @@ components:
           type: boolean
         welcomeChannelId:
           type: ["string", "null"]
+        welcomeMessage:
+          type: ["string", "null"]
         goodbyeEnabled:
           type: boolean
+        goodbyeMessage:
+          type: ["string", "null"]
         autoModEnabled:
           type: boolean
         maxMentions:

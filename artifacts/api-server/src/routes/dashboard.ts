@@ -77,12 +77,13 @@ router.get("/dashboard/guilds/:guildId/settings", async (req: Request, res: Resp
     .where(eq(guildSettingsTable.guildId, guildId));
 
   if (!existing) {
-    // Return defaults
     res.json({
       guildId,
       welcomeEnabled: true,
       welcomeChannelId: null,
+      welcomeMessage: null,
       goodbyeEnabled: true,
+      goodbyeMessage: null,
       autoModEnabled: true,
       bannedWords: [],
       maxMentions: 5,

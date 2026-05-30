@@ -11,7 +11,7 @@ const help: Command = {
   async execute({ message }: CommandContext) {
     const embed = new EmbedBuilder()
       .setColor(config.colors.info)
-      .setTitle("🤖 Bot Commands")
+      .setTitle("🤖 SentinelBot Commands")
       .setDescription(`Prefix: \`${config.prefix}\``)
       .addFields(
         {
@@ -19,10 +19,19 @@ const help: Command = {
           value: [
             `\`!ban @user [reason]\` — Ban a member`,
             `\`!kick @user [reason]\` — Kick a member`,
+            `\`!mute @user [minutes] [reason]\` — Timeout a member`,
+            `\`!unmute @user\` — Remove a timeout`,
             `\`!warn @user [reason]\` — Warn a member`,
             `\`!warnings @user\` — View warnings for a member`,
             `\`!clearwarnings @user\` — Clear all warnings (Admin only)`,
             `\`!purge <1-100>\` — Bulk delete messages`,
+            `\`!slowmode <0-21600>\` — Set channel slowmode (0 = off)`,
+          ].join("\n"),
+        },
+        {
+          name: "🔍 Info",
+          value: [
+            `\`!userinfo [@user]\` — Show info about a member`,
           ].join("\n"),
         },
         {
@@ -37,9 +46,9 @@ const help: Command = {
         {
           name: "🛡️ Auto-Moderation",
           value: [
-            "Auto-mod is always active and handles:",
-            "• Banned words / slurs",
-            "• Excessive mentions (spam)",
+            "Auto-mod handles:",
+            "• Banned words/slurs",
+            "• Excessive mentions",
             "• Excessive caps",
             "• Excessive emojis",
             "• Discord invite links",
@@ -48,11 +57,11 @@ const help: Command = {
         },
         {
           name: "😄 Auto-Reactions",
-          value: "Bot automatically reacts with emojis to messages containing keywords like `gm`, `gg`, `hype`, `lol`, `birthday`, and more!",
+          value: "Reacts to messages with keywords like `gm`, `gg`, `hype`, `lol`, `birthday`, and more!",
         },
         {
           name: "👋 Welcome / Goodbye",
-          value: "Automatic welcome and goodbye messages are sent in the system channel when members join or leave.",
+          value: "Automatic messages when members join or leave. Customize text in the Dashboard.",
         },
       )
       .setTimestamp()

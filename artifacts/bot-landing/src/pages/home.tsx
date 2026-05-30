@@ -118,26 +118,35 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats/Social Proof Marquee (Simulated) */}
+      {/* Stats Section */}
       <section className="py-10 border-y border-white/5 bg-black/40">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/5">
-            <div className="space-y-2">
-              <h3 className="text-3xl font-display font-bold text-primary">99.9%</h3>
-              <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Uptime</p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-3xl font-display font-bold text-primary">Zero</h3>
-              <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Config needed</p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-3xl font-display font-bold text-primary">Instant</h3>
-              <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Auto-moderation</p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-3xl font-display font-bold text-primary">100%</h3>
-              <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Free to use</p>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { value: 12, suffix: "", label: "Bot Commands", animated: true },
+              { value: 99.9, suffix: "%", label: "Uptime", animated: false, display: "99.9%" },
+              { value: 6, suffix: "", label: "Auto-Mod Filters", animated: true },
+              { value: 100, suffix: "%", label: "Free to Use", animated: false, display: "100%" },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="space-y-2"
+              >
+                <motion.h3
+                  className="text-3xl font-display font-bold text-primary"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                >
+                  {stat.display ?? `${stat.value}${stat.suffix}`}
+                </motion.h3>
+                <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">{stat.label}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

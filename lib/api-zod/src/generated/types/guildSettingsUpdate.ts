@@ -10,7 +10,11 @@ export interface GuildSettingsUpdate {
   welcomeEnabled?: boolean;
   /** @nullable */
   welcomeChannelId?: string | null;
+  /** @nullable */
+  welcomeMessage?: string | null;
   goodbyeEnabled?: boolean;
+  /** @nullable */
+  goodbyeMessage?: string | null;
   autoModEnabled?: boolean;
   maxMentions?: number;
   maxEmojis?: number;
