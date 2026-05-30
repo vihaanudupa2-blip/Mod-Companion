@@ -3,6 +3,17 @@ import { config } from "../config.js";
 import { handleAutoMod } from "./automod.js";
 import { handleAutoReact } from "./autoreact.js";
 
+const COMMAND_EMOJIS: Record<string, string> = {
+  warn:          "⚠️",
+  ban:           "🔨",
+  kick:          "👢",
+  purge:         "🗑️",
+  warnings:      "📋",
+  clearwarnings: "🧹",
+  help:          "🤖",
+  reactionrole:  "🎭",
+};
+
 export async function onMessageCreate(message: Message): Promise<void> {
   if (message.author.bot || !message.guild) return;
 
@@ -24,10 +35,17 @@ export async function onMessageCreate(message: Message): Promise<void> {
   const command = message.client.commands.get(commandName);
   if (!command) return;
 
+  // React to the command message with the command's emoji
+  const emoji = COMMAND_EMOJIS[commandName];
+  if (emoji) {
+    await message.react(emoji).catch(() => null);
+  }
+
   try {
     await command.execute({ message, args });
   } catch (err) {
     console.error(`Error executing command ${commandName}:`, err);
+    await message.react("❌").catch(() => null);
     await message.reply("An error occurred while executing that command.").catch(() => null);
   }
 }

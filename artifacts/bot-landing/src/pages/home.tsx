@@ -59,11 +59,11 @@ export default function Home() {
             <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/dashboard">
+            <a href="/dashboard/">
               <Button size="sm" variant="outline" className="gap-2 border-white/15 hover:bg-white/5 hidden sm:flex">
                 Dashboard
               </Button>
-            </Link>
+            </a>
             <a href={INVITE_LINK} target="_blank" rel="noreferrer">
               <Button size="sm" className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20">
                 <SiDiscord className="w-4 h-4" />
