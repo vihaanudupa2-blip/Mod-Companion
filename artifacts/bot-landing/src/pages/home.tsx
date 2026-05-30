@@ -25,7 +25,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const INVITE_LINK = "https://discord.com/oauth2/authorize?client_id=1509885542966366319&permissions=1099511893078&scope=bot";
+const INVITE_LINK = "https://discord.com/oauth2/authorize?client_id=1509885542966366319&permissions=1099780328534&scope=bot";
 
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 40 },

@@ -7,7 +7,7 @@ import { useGetMe, useGetDashboardGuilds } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const INVITE_LINK =
-  "https://discord.com/oauth2/authorize?client_id=1509885542966366319&permissions=1099511893078&scope=bot";
+  "https://discord.com/oauth2/authorize?client_id=1509885542966366319&permissions=1099780328534&scope=bot";
 
 function GuildCard({ guild }: { guild: { id: string; name: string; iconUrl?: string | null; botPresent: boolean } }) {
   return (
