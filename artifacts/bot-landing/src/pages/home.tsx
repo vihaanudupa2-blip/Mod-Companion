@@ -442,9 +442,9 @@ export default function Home() {
             <span className="font-display font-bold text-xl tracking-tight text-white">SentinelBot</span>
           </div>
           <div className="text-sm font-medium text-muted-foreground flex gap-8">
+            <Link href="/commands" className="hover:text-primary transition-colors">Commands</Link>
             <Link href="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
             <Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-            <a href="#" className="hover:text-primary transition-colors">Support Server</a>
           </div>
           <p className="text-sm text-muted-foreground font-medium">
             © {new Date().getFullYear()} SentinelBot. Not affiliated with Discord.
