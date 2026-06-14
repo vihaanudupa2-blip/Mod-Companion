@@ -2,6 +2,7 @@ import type { Message } from "discord.js";
 import { config } from "../config.js";
 import { handleAutoMod } from "./automod.js";
 import { handleAutoReact } from "./autoreact.js";
+import { logger } from "../../lib/logger.js";
 
 const COMMAND_EMOJIS: Record<string, string> = {
   warn:          "⚠️",
@@ -48,7 +49,7 @@ export async function onMessageCreate(message: Message): Promise<void> {
   try {
     await command.execute({ message, args });
   } catch (err) {
-    console.error(`Error executing command ${commandName}:`, err);
+    logger.error({ err, commandName }, "Command execution error");
     await message.react("❌").catch(() => null);
     await message.reply("An error occurred while executing that command.").catch(() => null);
   }
