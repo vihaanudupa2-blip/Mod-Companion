@@ -276,8 +276,11 @@ export default function Commands() {
               All Commands
             </h1>
             <p className="text-muted-foreground text-lg max-w-xl leading-relaxed">
-              Every command SentinelBot offers, organized by category. Prefix is{" "}
-              <code className="bg-white/10 px-2 py-0.5 rounded text-foreground font-mono text-sm">!</code>
+              Every command SentinelBot offers, organized by category. All commands work as both{" "}
+              <code className="bg-primary/20 text-primary px-2 py-0.5 rounded font-mono text-sm">/slash</code>{" "}
+              and{" "}
+              <code className="bg-white/10 px-2 py-0.5 rounded text-foreground font-mono text-sm">!prefix</code>{" "}
+              commands.
             </p>
           </motion.div>
 
