@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, type Variants } from "framer-motion";
 import { Link } from "wouter";
+
 import { Button } from "@/components/ui/button";
 import { 
   ShieldAlert, 
@@ -441,8 +442,8 @@ export default function Home() {
             <span className="font-display font-bold text-xl tracking-tight text-white">SentinelBot</span>
           </div>
           <div className="text-sm font-medium text-muted-foreground flex gap-8">
-            <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
+            <Link href="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
             <a href="#" className="hover:text-primary transition-colors">Support Server</a>
           </div>
           <p className="text-sm text-muted-foreground font-medium">
