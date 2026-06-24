@@ -9,6 +9,8 @@ import {
 import { successEmbed, errorEmbed, infoEmbed } from "../utils/embeds.js";
 import { isModerator, isAdmin } from "../utils/permissions.js";
 import { config } from "../config.js";
+import { db, guildSettingsTable } from "@workspace/db";
+import { invalidateGuildCache } from "../utils/guildSettings.js";
 
 export interface SlashCommand {
   data: Pick<SlashCommandBuilder, "name" | "description" | "toJSON">;
@@ -572,6 +574,102 @@ const reactionroleCmd: SlashCommand = {
   },
 };
 
+// ─── /setwelcome ──────────────────────────────────────────────────────────────
+const setwelcomeCmd: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName("setwelcome")
+    .setDescription("Set the channel and message for when members join")
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+    .setDMPermission(false)
+    .addChannelOption((o) =>
+      o.setName("channel").setDescription("The channel to send welcome messages in").setRequired(true)
+    )
+    .addStringOption((o) =>
+      o.setName("message").setDescription("Custom message ({user} = member name, {server} = server name)")
+    ),
+
+  async execute(interaction) {
+    if (!interaction.guild || !interaction.member) return;
+    const member = interaction.member as GuildMember;
+    if (!isAdmin(member)) {
+      await interaction.reply({ embeds: [errorEmbed("Permission Denied", "You need Administrator permissions.")], ephemeral: true });
+      return;
+    }
+
+    const channel = interaction.options.getChannel("channel", true);
+    const customMessage = interaction.options.getString("message") ?? null;
+
+    if (!("send" in channel)) {
+      await interaction.reply({ embeds: [errorEmbed("Invalid Channel", "Please choose a text channel.")], ephemeral: true });
+      return;
+    }
+
+    await db
+      .insert(guildSettingsTable)
+      .values({ guildId: interaction.guild.id, welcomeChannelId: channel.id, welcomeMessage: customMessage })
+      .onConflictDoUpdate({
+        target: guildSettingsTable.guildId,
+        set: { welcomeChannelId: channel.id, welcomeMessage: customMessage },
+      });
+
+    invalidateGuildCache(interaction.guild.id);
+
+    const desc = customMessage
+      ? `Welcome channel set to <#${channel.id}>.\n**Custom message:** ${customMessage}\n\n*Placeholders: \`{user}\` = member name, \`{server}\` = server name*`
+      : `Welcome channel set to <#${channel.id}>.\nThe default welcome embed will be used.`;
+
+    await interaction.reply({ embeds: [successEmbed("Welcome Channel Set", desc)] });
+  },
+};
+
+// ─── /setgoodbye ──────────────────────────────────────────────────────────────
+const setgoodbyeCmd: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName("setgoodbye")
+    .setDescription("Set the channel and message for when members leave")
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+    .setDMPermission(false)
+    .addChannelOption((o) =>
+      o.setName("channel").setDescription("The channel to send goodbye messages in").setRequired(true)
+    )
+    .addStringOption((o) =>
+      o.setName("message").setDescription("Custom message ({user} = member name, {server} = server name)")
+    ),
+
+  async execute(interaction) {
+    if (!interaction.guild || !interaction.member) return;
+    const member = interaction.member as GuildMember;
+    if (!isAdmin(member)) {
+      await interaction.reply({ embeds: [errorEmbed("Permission Denied", "You need Administrator permissions.")], ephemeral: true });
+      return;
+    }
+
+    const channel = interaction.options.getChannel("channel", true);
+    const customMessage = interaction.options.getString("message") ?? null;
+
+    if (!("send" in channel)) {
+      await interaction.reply({ embeds: [errorEmbed("Invalid Channel", "Please choose a text channel.")], ephemeral: true });
+      return;
+    }
+
+    await db
+      .insert(guildSettingsTable)
+      .values({ guildId: interaction.guild.id, goodbyeChannelId: channel.id, goodbyeMessage: customMessage })
+      .onConflictDoUpdate({
+        target: guildSettingsTable.guildId,
+        set: { goodbyeChannelId: channel.id, goodbyeMessage: customMessage },
+      });
+
+    invalidateGuildCache(interaction.guild.id);
+
+    const desc = customMessage
+      ? `Goodbye channel set to <#${channel.id}>.\n**Custom message:** ${customMessage}\n\n*Placeholders: \`{user}\` = member name, \`{server}\` = server name*`
+      : `Goodbye channel set to <#${channel.id}>.\nThe default goodbye embed will be used.`;
+
+    await interaction.reply({ embeds: [successEmbed("Goodbye Channel Set", desc)] });
+  },
+};
+
 // ─── Export ───────────────────────────────────────────────────────────────────
 export const SLASH_COMMANDS: SlashCommand[] = [
   banCmd, kickCmd, muteCmd, unmuteCmd,
@@ -579,4 +677,5 @@ export const SLASH_COMMANDS: SlashCommand[] = [
   purgeCmd, slowmodeCmd,
   userinfoCmd, helpCmd,
   reactionroleCmd,
+  setwelcomeCmd, setgoodbyeCmd,
 ];

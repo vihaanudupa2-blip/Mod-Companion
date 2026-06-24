@@ -15,6 +15,7 @@ const DEFAULTS: Omit<GuildSettings, "guildId" | "updatedAt"> = {
   welcomeChannelId: null,
   welcomeMessage: null,
   goodbyeEnabled: true,
+  goodbyeChannelId: null,
   goodbyeMessage: null,
   autoModEnabled: true,
   bannedWords: [],

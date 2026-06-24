@@ -18,9 +18,10 @@ export async function onGuildMemberRemove(
 
   let channel: TextChannel | null = null;
 
-  // Use configured welcome channel as fallback (same channel for goodbye)
-  if (settings.welcomeChannelId) {
-    const ch = guild.channels.cache.get(settings.welcomeChannelId);
+  // Use dedicated goodbye channel, fall back to welcome channel
+  const channelId = settings.goodbyeChannelId ?? settings.welcomeChannelId;
+  if (channelId) {
+    const ch = guild.channels.cache.get(channelId);
     if (ch?.isTextBased() && !ch.isDMBased()) {
       channel = ch as TextChannel;
     }

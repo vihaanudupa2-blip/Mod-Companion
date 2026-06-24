@@ -21,11 +21,14 @@ import userinfo from "./commands/userinfo.js";
 import slowmode from "./commands/slowmode.js";
 import reactionrole from "./commands/reactionrole.js";
 import help from "./commands/help.js";
+import setwelcome from "./commands/setwelcome.js";
+import setgoodbye from "./commands/setgoodbye.js";
 
 const PREFIX_COMMANDS: Command[] = [
   ban, kick, warn, warnings, clearwarnings, purge,
   mute, unmute, userinfo, slowmode,
   reactionrole, help,
+  setwelcome, setgoodbye,
 ];
 
 const CLIENT_ID = "1509885542966366319";
