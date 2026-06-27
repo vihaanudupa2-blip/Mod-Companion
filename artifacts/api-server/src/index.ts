@@ -2,19 +2,7 @@ import app from "./app";
 import { logger } from "./lib/logger";
 import { startBot } from "./bot/index.js";
 
-const rawPort = process.env["PORT"];
-
-if (!rawPort) {
-  throw new Error(
-    "PORT environment variable is required but was not provided.",
-  );
-}
-
-const port = Number(rawPort);
-
-if (Number.isNaN(port) || port <= 0) {
-  throw new Error(`Invalid PORT value: "${rawPort}"`);
-}
+const port = Number(process.env["PORT"] || "3000");
 
 // Listen first so healthchecks pass immediately, then start the bot
 app.listen(port, (err) => {
