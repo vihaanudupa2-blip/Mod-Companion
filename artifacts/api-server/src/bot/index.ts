@@ -59,15 +59,7 @@ export function startBot(): void {
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.DirectMessages,
-  ],
-  partials: [
-    Partials.GuildMember,
-    Partials.User,
-    Partials.Message,
-    Partials.Channel,
-    Partials.Reaction,
-  ],
-});
+  
 
 client.on("disconnect", () => {
   console.log("Bot disconnected");
