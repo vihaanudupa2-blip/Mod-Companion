@@ -50,8 +50,7 @@ export function startBot(): void {
     logger.warn("DISCORD_TOKEN not set — bot will not start");
     return;
   }
-
-  const client = new Client({
+const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -59,7 +58,15 @@ export function startBot(): void {
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.DirectMessages,
-  
+  ],
+  partials: [
+    Partials.GuildMember,
+    Partials.User,
+    Partials.Message,
+    Partials.Channel,
+    Partials.Reaction,
+  ],
+});
 
 client.on("disconnect", () => {
   console.log("Bot disconnected");
@@ -73,14 +80,14 @@ process.on("uncaughtException", console.error);
 client.once("ready", () => {
   console.log(`U-bot logged in as ${client.user?.tag}`);
 });
-    partials: [Partials.GuildMember, Partials.User, Partials.Message, Partials.Channel, Partials.Reaction],
-  });
 
-  client.botState = {
-    warnings: new Map(),
-    duplicateMessages: new Map(),
-    reactionRoles: [],
-  };
+client.botState = {
+  warnings: new Map(),
+  duplicateMessages: new Map(),
+  reactionRoles: [],
+};
+  
+
 
   // Register prefix commands
   client.commands = new Collection<string, Command>();
