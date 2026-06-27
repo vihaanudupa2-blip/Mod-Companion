@@ -60,6 +60,18 @@ export function startBot(): void {
       GatewayIntentBits.GuildMessageReactions,
       GatewayIntentBits.DirectMessages,
     ],
+    client.on("disconnect", () => {
+  console.log("Bot disconnected");
+});
+
+client.on("error", console.error);
+
+process.on("unhandledRejection", console.error);
+process.on("uncaughtException", console.error);
+
+client.once("ready", () => {
+  console.log(`U-bot logged in as ${client.user?.tag}`);
+});
     partials: [Partials.GuildMember, Partials.User, Partials.Message, Partials.Channel, Partials.Reaction],
   });
 
