@@ -5,6 +5,7 @@ import {
   EmbedBuilder,
   TextChannel,
   GuildMember,
+  ChannelType,
 } from "discord.js";
 import { successEmbed, errorEmbed, infoEmbed } from "../utils/embeds.js";
 import { isModerator, isAdmin } from "../utils/permissions.js";
@@ -582,10 +583,17 @@ const setwelcomeCmd: SlashCommand = {
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .setDMPermission(false)
     .addChannelOption((o) =>
-      o.setName("channel").setDescription("The channel to send welcome messages in").setRequired(true)
+      o
+        .setName("channel")
+        .setDescription("The text channel to send welcome messages in")
+        .addChannelTypes(ChannelType.GuildText)
+        .setRequired(true)
     )
     .addStringOption((o) =>
-      o.setName("message").setDescription("Custom message ({user} = member name, {server} = server name)")
+      o
+        .setName("message")
+        .setDescription("Custom message — use {user} for member name, {server} for server name")
+        .setRequired(false)
     ),
 
   async execute(interaction) {
@@ -596,13 +604,8 @@ const setwelcomeCmd: SlashCommand = {
       return;
     }
 
-    const channel = interaction.options.getChannel("channel", true);
+    const channel = interaction.options.getChannel("channel", true, [ChannelType.GuildText]);
     const customMessage = interaction.options.getString("message") ?? null;
-
-    if (!("send" in channel)) {
-      await interaction.reply({ embeds: [errorEmbed("Invalid Channel", "Please choose a text channel.")], ephemeral: true });
-      return;
-    }
 
     await db
       .insert(guildSettingsTable)
@@ -630,10 +633,17 @@ const setgoodbyeCmd: SlashCommand = {
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .setDMPermission(false)
     .addChannelOption((o) =>
-      o.setName("channel").setDescription("The channel to send goodbye messages in").setRequired(true)
+      o
+        .setName("channel")
+        .setDescription("The text channel to send goodbye messages in")
+        .addChannelTypes(ChannelType.GuildText)
+        .setRequired(true)
     )
     .addStringOption((o) =>
-      o.setName("message").setDescription("Custom message ({user} = member name, {server} = server name)")
+      o
+        .setName("message")
+        .setDescription("Custom message — use {user} for member name, {server} for server name")
+        .setRequired(false)
     ),
 
   async execute(interaction) {
@@ -644,13 +654,8 @@ const setgoodbyeCmd: SlashCommand = {
       return;
     }
 
-    const channel = interaction.options.getChannel("channel", true);
+    const channel = interaction.options.getChannel("channel", true, [ChannelType.GuildText]);
     const customMessage = interaction.options.getString("message") ?? null;
-
-    if (!("send" in channel)) {
-      await interaction.reply({ embeds: [errorEmbed("Invalid Channel", "Please choose a text channel.")], ephemeral: true });
-      return;
-    }
 
     await db
       .insert(guildSettingsTable)
