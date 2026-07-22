@@ -9,27 +9,7 @@ import { onGuildMemberAdd } from "./events/guildMemberAdd.js";
 import { onGuildMemberRemove } from "./events/guildMemberRemove.js";
 import { onReactionAdd, onReactionRemove } from "./events/reactionRoles.js";
 
-import ban from "./commands/ban.js";
-import kick from "./commands/kick.js";
-import warn from "./commands/warn.js";
-import warnings from "./commands/warnings.js";
-import clearwarnings from "./commands/clearwarnings.js";
-import purge from "./commands/purge.js";
-import mute from "./commands/mute.js";
-import unmute from "./commands/unmute.js";
-import userinfo from "./commands/userinfo.js";
-import slowmode from "./commands/slowmode.js";
-import reactionrole from "./commands/reactionrole.js";
-import help from "./commands/help.js";
-import setwelcome from "./commands/setwelcome.js";
-import setgoodbye from "./commands/setgoodbye.js";
-
-const PREFIX_COMMANDS: Command[] = [
-  ban, kick, warn, warnings, clearwarnings, purge,
-  mute, unmute, userinfo, slowmode,
-  reactionrole, help,
-  setwelcome, setgoodbye,
-];
+import { PREFIX_COMMANDS } from "./commands/index.js";
 
 const CLIENT_ID = "1509885542966366319";
 
