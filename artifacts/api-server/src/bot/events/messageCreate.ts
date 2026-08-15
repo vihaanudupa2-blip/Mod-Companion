@@ -2,6 +2,7 @@ import type { Message } from "discord.js";
 import { config } from "../config.js";
 import { handleAutoMod } from "./automod.js";
 import { handleAutoReact } from "./autoreact.js";
+import { handleAutomations } from "./automations.js";
 import { logger } from "../../lib/logger.js";
 
 const COMMAND_EMOJIS: Record<string, string> = {
@@ -29,6 +30,10 @@ export async function onMessageCreate(message: Message): Promise<void> {
   if (!message.content.startsWith(config.prefix)) {
     await handleAutoReact(message);
   }
+
+  // Custom responses and sticky messages run after AutoMod so removed
+  // messages never trigger an automation.
+  await handleAutomations(message);
 
   // Check if message is a command
   if (!message.content.startsWith(config.prefix)) return;

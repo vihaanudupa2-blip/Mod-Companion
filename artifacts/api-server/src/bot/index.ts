@@ -8,6 +8,10 @@ import { onMessageCreate } from "./events/messageCreate.js";
 import { onGuildMemberAdd } from "./events/guildMemberAdd.js";
 import { onGuildMemberRemove } from "./events/guildMemberRemove.js";
 import { onReactionAdd, onReactionRemove } from "./events/reactionRoles.js";
+import { onMessageDelete, onMessageUpdate } from "./events/messageAudit.js";
+import { onRoleCreate, onRoleDelete, onRoleUpdate, onChannelDelete } from "./events/security.js";
+import { onStringSelectMenu } from "./events/selfRoles.js";
+import { runScheduledTasks } from "./events/scheduledTasks.js";
 
 import { PREFIX_COMMANDS } from "./commands/index.js";
 
@@ -84,6 +88,7 @@ client.botState = {
 
     // Register slash commands with Discord after login
     void registerSlashCommands(config.token);
+    runScheduledTasks(client);
   });
 
   // ── Prefix commands ──────────────────────────────────────────────────────────
@@ -93,6 +98,10 @@ client.botState = {
 
   // ── Slash commands ───────────────────────────────────────────────────────────
   client.on(Events.InteractionCreate, async (interaction) => {
+    if (interaction.isStringSelectMenu()) {
+      await onStringSelectMenu(interaction).catch((err) => logger.error({ err }, "self role interaction error"));
+      return;
+    }
     if (!interaction.isChatInputCommand()) return;
 
     const handler = slashMap.get(interaction.commandName);
@@ -126,6 +135,32 @@ client.botState = {
 
   client.on(Events.MessageReactionRemove, (reaction, user) => {
     onReactionRemove(reaction, user).catch((err) => logger.error({ err }, "messageReactionRemove error"));
+  });
+
+  client.on(Events.MessageDelete, (message) => {
+    onMessageDelete(message).catch((err) => logger.error({ err }, "message delete audit error"));
+  });
+
+  client.on(Events.MessageUpdate, (oldMessage, newMessage) => {
+    onMessageUpdate(oldMessage, newMessage).catch((err) => logger.error({ err }, "message update audit error"));
+  });
+
+  client.on(Events.GuildRoleCreate, (role) => {
+    onRoleCreate(role).catch((err) => logger.error({ err }, "role create protection error"));
+  });
+
+  client.on(Events.GuildRoleDelete, (role) => {
+    onRoleDelete(role).catch((err) => logger.error({ err }, "role delete protection error"));
+  });
+
+  client.on(Events.GuildRoleUpdate, (oldRole, newRole) => {
+    onRoleUpdate(oldRole, newRole).catch((err) => logger.error({ err }, "role update protection error"));
+  });
+
+  client.on(Events.ChannelDelete, (channel) => {
+    if (!channel.isDMBased()) {
+      onChannelDelete(channel).catch((err) => logger.error({ err }, "channel delete protection error"));
+    }
   });
 
   client.login(config.token).catch((err) => {

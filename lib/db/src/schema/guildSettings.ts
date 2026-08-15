@@ -10,6 +10,8 @@ export const guildSettingsTable = pgTable("guild_settings", {
   goodbyeEnabled: boolean("goodbye_enabled").notNull().default(true),
   goodbyeChannelId: text("goodbye_channel_id"),
   goodbyeMessage: text("goodbye_message"),
+  welcomeDmEnabled: boolean("welcome_dm_enabled").notNull().default(false),
+  welcomeDmMessage: text("welcome_dm_message"),
   autoModEnabled: boolean("auto_mod_enabled").notNull().default(true),
   bannedWords: text("banned_words").array().notNull().default([]),
   maxMentions: integer("max_mentions").notNull().default(5),

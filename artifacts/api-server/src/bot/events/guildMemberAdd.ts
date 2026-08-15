@@ -12,6 +12,11 @@ export async function onGuildMemberAdd(member: GuildMember): Promise<void> {
   const guild = member.guild;
   const settings = await getGuildSettings(guild.id);
 
+  if (settings.welcomeDmEnabled && settings.welcomeDmMessage) {
+    const dm = interpolate(settings.welcomeDmMessage, member.user.username, guild.name);
+    await member.send(dm).catch(() => null);
+  }
+
   if (!settings.welcomeEnabled) return;
 
   let channel: TextChannel | null = null;

@@ -12,6 +12,8 @@ import { isModerator, isAdmin } from "../utils/permissions.js";
 import { config } from "../config.js";
 import { db, guildSettingsTable } from "@workspace/db";
 import { invalidateGuildCache } from "../utils/guildSettings.js";
+import { ADVANCED_SLASH_COMMANDS } from "./advancedCommands.js";
+import { createModerationCase } from "../utils/advancedData.js";
 
 export interface SlashCommand {
   data: Pick<SlashCommandBuilder, "name" | "description" | "toJSON">;
@@ -59,6 +61,13 @@ const banCmd: SlashCommand = {
     await interaction.deferReply();
     await target.send({ embeds: [errorEmbed("You've Been Banned", `You were banned from **${interaction.guild.name}**.\n**Reason:** ${reason}`)] }).catch(() => null);
     await target.ban({ reason: `${interaction.user.tag}: ${reason}` });
+    await createModerationCase({
+      guildId: interaction.guild.id,
+      action: "ban",
+      userId: target.id,
+      moderatorId: interaction.user.id,
+      reason,
+    });
     await interaction.editReply({ embeds: [successEmbed("Member Banned", `**${target.user.tag}** has been banned.\n**Reason:** ${reason}\n**Moderator:** ${interaction.user.tag}`)] });
   },
 };
@@ -104,6 +113,13 @@ const kickCmd: SlashCommand = {
     await interaction.deferReply();
     await target.send({ embeds: [errorEmbed("You've Been Kicked", `You were kicked from **${interaction.guild.name}**.\n**Reason:** ${reason}`)] }).catch(() => null);
     await target.kick(`${interaction.user.tag}: ${reason}`);
+    await createModerationCase({
+      guildId: interaction.guild.id,
+      action: "kick",
+      userId: target.id,
+      moderatorId: interaction.user.id,
+      reason,
+    });
     await interaction.editReply({ embeds: [successEmbed("Member Kicked", `**${target.user.tag}** has been kicked.\n**Reason:** ${reason}\n**Moderator:** ${interaction.user.tag}`)] });
   },
 };
@@ -152,6 +168,13 @@ const muteCmd: SlashCommand = {
 
     await interaction.deferReply();
     await target.timeout(minutes * 60 * 1000, `${interaction.user.tag}: ${reason}`);
+    await createModerationCase({
+      guildId: interaction.guild.id,
+      action: "mute",
+      userId: target.id,
+      moderatorId: interaction.user.id,
+      reason: `${minutes} minute(s): ${reason}`,
+    });
     await target.send({ embeds: [errorEmbed("You've Been Muted", `You were timed out in **${interaction.guild.name}** for **${minutes} minute(s)**.\n**Reason:** ${reason}`)] }).catch(() => null);
     await interaction.editReply({ embeds: [successEmbed("Member Muted", `**${target.user.tag}** has been timed out for **${minutes} minute(s)**.\n**Reason:** ${reason}\n**Moderator:** ${interaction.user.tag}`)] });
   },
@@ -231,6 +254,13 @@ const warnCmd: SlashCommand = {
       reason,
       moderatorId: interaction.user.id,
       timestamp: new Date(),
+    });
+    await createModerationCase({
+      guildId: interaction.guild.id,
+      action: "warn",
+      userId: target.id,
+      moderatorId: interaction.user.id,
+      reason,
     });
 
     const count = warnings.get(key)!.length;
@@ -427,7 +457,7 @@ const helpCmd: SlashCommand = {
           .addFields(
             {
               name: "🔨 Moderation",
-              value: "`/ban` `/kick` `/mute` `/unmute` `/warn` `/warnings` `/clearwarnings` `/purge` `/slowmode`",
+              value: "`/ban` `/kick` `/mute` `/unmute` `/warn` `/warnings` `/clearwarnings` `/purge` `/slowmode` `/case` `/modhistory` `/note` `/notes` `/report`",
             },
             {
               name: "🔍 Info",
@@ -443,7 +473,15 @@ const helpCmd: SlashCommand = {
             },
             {
               name: "👋 Welcome / Goodbye",
-              value: "Automatic messages on join/leave. Customize in the Dashboard.",
+              value: "Automatic messages on join/leave. Customize with `/setwelcome`, `/setgoodbye`, and `/welcomedm`.",
+            },
+            {
+              name: "⚙️ Server tools",
+              value: "`/setup` `/config` `/schedule` `/sticky` `/autoresponse` `/selfrole` `/cleanup`",
+            },
+            {
+              name: "🛡️ Protection and logs",
+              value: "`/antinuke` `/roleprotect` `/messagelogs`",
             },
           )
           .setTimestamp()
@@ -683,4 +721,5 @@ export const SLASH_COMMANDS: SlashCommand[] = [
   userinfoCmd, helpCmd,
   reactionroleCmd,
   setwelcomeCmd, setgoodbyeCmd,
+  ...ADVANCED_SLASH_COMMANDS,
 ];
